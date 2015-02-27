@@ -1,14 +1,4 @@
-# ask use to enter first number
-# check if entry is actually a number
-#   if not, ask for entry again
-#   if it is, ask for second number
-# check if input is actually a number
-#   if not, ask for input again
-#   if it is, ask which operation to perform
-# if operation is valid, output results
-# if operation is invalid, ask for operation again
-
-require 'pry'
+# calculator.rb
 
 # determine if selected operation is valid
 def valid_operation(choice)
@@ -21,6 +11,7 @@ end
 # determine if input is a valid number
 def is_number?(num)
   chars = num.split('')
+  chars.delete('.')
   result = true
   chars.each { |char| result = false if !char.between?('0', '9') }
   result
@@ -39,6 +30,11 @@ end while is_number?(num2) == false
 begin
   puts "1) Add 2) Subtract 3) Multiply 4) Divide"
   operation = gets.chomp
+  # protect against division by zero
+  if (operation == '4') && (num2 == '0')
+    puts "Cannot divide by zero. Please make another selection."
+    operation = '0'
+  end
 end while valid_operation(operation) == false
 
 # perform calculation
