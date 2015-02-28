@@ -1,11 +1,8 @@
 # calculator.rb
 
 # determine if selected operation is valid
-def valid_operation(choice)
-  (1..4).each do |i|
-    return true if choice.to_i == i
-  end
-  false
+def valid_operation?(choice)
+  (1..4).include?(choice.to_i)
 end
 
 # determine if input is a valid number
@@ -20,12 +17,12 @@ end
 begin
   puts "Please enter the first number:"
   num1 = gets.chomp
-end while is_number?(num1) == false
+end while !is_number?(num1)
 
 begin
   puts "Please enter the second number:"
   num2 = gets.chomp
-end while is_number?(num2) == false
+end while !is_number?(num2)
 
 begin
   puts "1) Add 2) Subtract 3) Multiply 4) Divide"
@@ -35,7 +32,7 @@ begin
     puts "Cannot divide by zero. Please make another selection."
     operation = '0'
   end
-end while valid_operation(operation) == false
+end while !valid_operation?(operation)
 
 # perform calculation
 case operation
