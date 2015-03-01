@@ -1,5 +1,7 @@
 # tictactoe.rb
 
+require 'pry'
+
 WINNING_COMBINATIONS = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 5, 9], [3, 5, 7],
                         [1, 4, 7], [2, 5, 8], [3, 6, 9]]
 
@@ -19,7 +21,7 @@ def draw_board(b)
 end
 
 def empty_squares(board)
-  board.select { |k, v| v == ' ' }.keys
+  board.select { |_, v| v == ' ' }.keys
 end
 
 def player_chooses_square(board)
@@ -56,17 +58,22 @@ end
 
 def two_in_a_row(combo, marker)
   if combo.values.count(marker) == 2
-    combo.select { |k, v| v == ' '}.keys.first
+    combo.select { |_, v| v == ' '}.keys.first
   else
     false
   end
 end
 
+def build_combo_hash(combo, board)
+  hash = { combo[0] => board[combo[0]],
+           combo[1] => board[combo[1]],
+           combo[2] => board[combo[2]] }
+end
+
 def find_possible_win(board, marker)
   win_move = WINNING_COMBINATIONS.select do |combo|
-    two_in_a_row({combo[0] => board[combo[0]],
-                  combo[1] => board[combo[1]],
-                  combo[2] => board[combo[2]]}, marker)
+    combo_hash = build_combo_hash(combo, board)
+    two_in_a_row(combo_hash, marker)
   end
   win_move.flatten!
   winning_square = win_move.select { |square| board[square] == ' ' }
