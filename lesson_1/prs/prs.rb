@@ -32,10 +32,10 @@ loop do
   # determine winner
   if player_choice == computer_choice
     puts "It's a tie!"
-  elsif (player_choice == 'p' && computer_choice == 'r') || (player_choice == 
-    'r' && computer_choice == 's') || (player_choice == 's' && 
-    computer_choice == 'p')
-      display_winning_message(player_choice, "Player")
+  elsif (player_choice == 'p' && computer_choice == 'r') ||
+        (player_choice == 'r' && computer_choice == 's') ||
+        (player_choice == 's' && computer_choice == 'p')
+    display_winning_message(player_choice, "Player")
   else
     display_winning_message(computer_choice, "Computer")
   end
