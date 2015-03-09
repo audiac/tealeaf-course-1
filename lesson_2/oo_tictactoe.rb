@@ -42,16 +42,16 @@ class Board
   end
 
   def build_combo_hash(combo)
-    hash = { combo[0] => @data[combo[0]].value,
-             combo[1] => @data[combo[1]].value,
-             combo[2] => @data[combo[2]].value }
+    combo_hash = { combo[0] => @data[combo[0]].value,
+                   combo[1] => @data[combo[1]].value,
+                   combo[2] => @data[combo[2]].value }
   end
 
-  def two_in_a_row(hash)
-    if hash.values.count('O') == 2
-      hash.select { |_, v| v == ' ' }.keys.first
-    elsif hash.values.count('X') == 2
-      hash.select { |_, v| v == ' ' }.keys.first
+  def two_in_a_row(combinations)
+    if combinations.values.count('O') == 2
+      combinations.select { |_, v| v == ' ' }.keys.first
+    elsif combinations.values.count('X') == 2
+      combinations.select { |_, v| v == ' ' }.keys.first
     else
       false
     end
