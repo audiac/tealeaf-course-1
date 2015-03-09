@@ -1,3 +1,5 @@
+require 'pry'
+
 class Board
   WINNING_COMBINATIONS = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 5, 9], [3, 5, 7],
                           [1, 4, 7], [2, 5, 8], [3, 6, 9]]
@@ -62,6 +64,7 @@ class Board
       combo_hash = build_combo_hash(combo)
       two_in_a_row(combo_hash)
     end
+    binding.pry
     options.flatten!
     positions = options.select { |option| @data[option].empty? }
     positions[0]
@@ -72,15 +75,15 @@ class Square
   attr_accessor :value
 
   def initialize(value)
-    @value = value
+    self.value = value
   end
 
   def empty?
-    @value == ' '
+    value == ' '
   end
 
   def to_s
-    @value
+    value
   end
 end
 
