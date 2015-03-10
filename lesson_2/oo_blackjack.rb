@@ -1,40 +1,45 @@
 class Game
   attr_accessor :player, :dealer, :deck
+  HAND_LIMIT = 21
+  DEALER_MINIMUM = 17
 
   def initialize
+    self.player = Player.new(get_player_name)
+    self.dealer = Player.new("Dealer")
+    self.deck = Deck.new
+  end
+
+  def get_player_name
     puts "Welcome to Blackjack!"
     puts "What is your name?"
     player_name = gets.chomp
-    self.player = Player.new(player_name)
-    self.dealer = Player.new("Dealer")
-    self.deck = Deck.new
   end
 
   def play
     deal_opening_hand
     if dealer.has_blackjack?
-      winning_message(dealer)
+      show_winning_message_and_exit(dealer)
     elsif player.has_blackjack?
-      winning_message(player)
+      show_winning_message_and_exit(player)
     else
       show_flop
     end
 
     player_turn
-    busted_message(player) if player.busted?
+    show_busted_message_and_exit(player) if player.busted?
     dealer_turn
-    busted_message(dealer) if dealer.busted?
+    show_busted_message_and_exit(dealer) if dealer.busted?
     compare_hands
   end
 
   def deal_opening_hand
-    player.hand << deck.deal_card
-    dealer.hand << deck.deal_card
-    player.hand << deck.deal_card
-    dealer.hand << deck.deal_card
+    2.times do
+      player.hand << deck.deal_card
+      dealer.hand << deck.deal_card
+    end
   end
 
-  def winning_message(winner)
+  def show_winning_message_and_exit(winner)
     puts "#{winner.name} has Blackjack!"
     exit
   end
@@ -56,7 +61,7 @@ class Game
   end
 
   def dealer_turn
-    while dealer.card_total < 17
+    while dealer.card_total < DEALER_MINIMUM
       dealer.hand << deck.deal_card
       puts "Dealer hits!"
     end
@@ -75,7 +80,7 @@ class Game
     end
   end
 
-  def busted_message(loser)
+  def show_busted_message_and_exit(loser)
     puts "#{loser.name} busted with #{loser.card_total}!"
     exit
   end
@@ -93,9 +98,9 @@ class Player
     values = hand.collect { |card| card.value }
     if values.include?('A') && (values.include?('10') || values.include?('J') ||
        values.include?('Q') || values.include?('K'))
-      true
+      return true
     else
-      false
+      return false
     end
   end
 
@@ -114,14 +119,14 @@ class Player
 
     # correct total for aces when over 21
     values.count('A').times do
-    total -= 10 if total > 21
+    total -= 10 if total > Game::HAND_LIMIT
   end
 
   total
   end
 
   def busted?
-    card_total > 21
+    card_total > Game::HAND_LIMIT
   end
 end
 
