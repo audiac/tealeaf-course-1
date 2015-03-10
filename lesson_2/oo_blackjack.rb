@@ -1,15 +1,85 @@
-# Blackjack is a game played between a human player and a computer player. Each
-# player is dealt two cards from a deck (alternating) at the beginning. Both players
-# check to see if they have Blackjack. If neither does, the human chooses whether to
-# take another card (hit) or stay with the cards they have. The computer hits if
-# they have less than 17 and stays if they have 17 or greater. After both players
-# stay, the cards are compared and whoever has a higher total wins the game. If at
-# any time a player's cards total more than 21, that player has "busted" and loses
-# the game.
+class Game
+  attr_accessor :player, :dealer, :deck
 
-# Game
-# - play
-# - determine_winner
+  def initialize
+    puts "Welcome to Blackjack!"
+    puts "What is your name?"
+    player_name = gets.chomp
+    self.player = Player.new(player_name)
+    self.dealer = Player.new("Dealer")
+    self.deck = Deck.new
+  end
+
+  def play
+    deal_opening_hand
+    if dealer.has_blackjack?
+      winning_message(dealer)
+    elsif player.has_blackjack?
+      winning_message(player)
+    else
+      show_flop
+    end
+
+    player_turn
+    busted_message(player) if player.busted?
+    dealer_turn
+    busted_message(dealer) if dealer.busted?
+    compare_hands
+  end
+
+  def deal_opening_hand
+    player.hand << deck.deal_card
+    dealer.hand << deck.deal_card
+    player.hand << deck.deal_card
+    dealer.hand << deck.deal_card
+  end
+
+  def winning_message(winner)
+    puts "#{winner.name} has Blackjack!"
+    exit
+  end
+
+  def show_flop
+    puts "Dealer is showing #{dealer.hand[0]}"
+    puts "Your cards: "
+    player.hand.each { |card| puts card }
+  end
+
+  def player_turn
+    loop do
+      puts "Would you like to hit or stay ('h' / 's')?"
+      hit_or_stay = gets.chomp
+      player.hand << deck.deal_card if hit_or_stay == 'h'
+      show_flop
+      break if player.busted? || hit_or_stay != 'h'
+    end
+  end
+
+  def dealer_turn
+    while dealer.card_total < 17
+      dealer.hand << deck.deal_card
+      puts "Dealer hits!"
+    end
+    puts "Dealer stays."
+  end
+
+  def compare_hands
+    if dealer.card_total > player.card_total
+      puts "Dealer won with #{dealer.card_total}"
+      puts "You had #{player.card_total}"
+    elsif dealer.card_total < player.card_total
+      puts "You won with #{player.card_total}"
+      puts "Dealer had #{dealer.card_total}"
+    else
+      puts "It's a tie!"
+    end
+  end
+
+  def busted_message(loser)
+    puts "#{loser.name} busted with #{loser.card_total}!"
+    exit
+  end
+end
 
 class Player
   attr_accessor :name, :hand
@@ -29,14 +99,31 @@ class Player
     end
   end
 
-# - busted?
+  def card_total
+    values = hand.collect { |card| card.value }
+    total = 0
+    values.each do |value|
+      if value == 'A'
+        total += 11
+      elsif value.to_i == 0
+        total += 10
+      else
+        total += value.to_i
+      end
+    end
+
+    # correct total for aces when over 21
+    values.count('A').times do
+    total -= 10 if total > 21
+  end
+
+  total
+  end
+
+  def busted?
+    card_total > 21
+  end
 end
-
-# Human
-# - hit_or_stay
-
-# Dealer
-# - hit_or_stay
 
 class Card
   attr_accessor :value, :suit
@@ -71,3 +158,5 @@ class Deck
     cards.pop
   end
 end
+
+Game.new.play
